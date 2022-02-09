@@ -1,37 +1,37 @@
 package ru.netology
 
 import kotlin.math.roundToInt
+const val VISA = "Visa"
+const val MAESTRO = "Maestro"
+const val MASTERCARD = "Mastercard"
+const val VK = "VkPay"
+const val MIR = "Mir"
 
 fun main() {
-    val typeOfAccount = "Visa"
-    val previousTransactions = 0
-    val currentTransaction = 10000
-
-    val result = checkCommission(type = "Maestro", previousSum = previousTransactions, currentSum =  currentTransaction).roundToInt()
+    val result = checkCommission(currentSum =  90)
     val message = formattedMessage(result)
 
     println(message)
-
 }
-fun checkCommission(type: String = "VkPay", previousSum: Int = 0, currentSum: Int): Double{
+
+fun checkCommission(type: String = VK, previousSum: Int = 0, currentSum: Int): Int{
     return when (type){
-        "Maestro", "Mastercard" -> checkPreviousTransactions(previousSum,currentSum)
-        "Visa", "Mir" -> checkMinCommission(currentSum)
-        else -> 0.0
-    }
-}
-fun checkPreviousTransactions(previousSum: Int, currentSum: Int): Double{
-    return when (previousSum){
-        in 0..75000*100 -> currentSum * 0.006 + 20 * 100
-        else -> 0.0
+        MAESTRO, MASTERCARD -> checkPreviousTransactions(previousSum,currentSum)
+        VISA, MIR -> checkMinCommission(currentSum)
+        VK -> 0
+        else -> error("Unsupported payment system")
     }
 }
 
-fun checkMinCommission(sum: Int): Double {
-    return when (sum * 0.0075) {
-        in 0.0..3500.0 -> 3500.0
-        else -> sum * 0.0075
-    }
+fun checkPreviousTransactions(previousSum: Int, currentSum: Int): Int{
+    return if (previousSum / 100 > 75000) (currentSum * 0.006 + 2000).roundToInt() else 0
+}
+
+fun checkMinCommission(sum: Int): Int {
+    val amount = (sum * 0.0075).roundToInt()
+    val minCommission = 3500
+    return if (amount > minCommission) amount else minCommission
+
 }
     fun formattedMessage(sum: Int): String{
        val roubles = sum / 100
