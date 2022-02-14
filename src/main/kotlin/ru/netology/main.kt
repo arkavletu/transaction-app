@@ -6,12 +6,15 @@ const val MAESTRO = "Maestro"
 const val MASTERCARD = "Mastercard"
 const val VK = "VkPay"
 const val MIR = "Mir"
+const val MIN_COMMISSION = 3500 // for visa, mir
+const val PERCENT_V_M = 0.75 // % for visa, mir
+const val LIMIT = 75000 * 100 // limit for maestro, mastercard for zero commission
+const val PERCENT_M_M = 0.6 // % for maestro, mastercard
+const val ADDITIONAL_PAY = 2000 // add to commission for maestro, mastercard
 
 fun main() {
     val result = checkCommission(currentSum =  90)
-    val message = formattedMessage(result)
-
-    println(message)
+    println(formattedMessage(result))
 }
 
 fun checkCommission(type: String = VK, previousSum: Int = 0, currentSum: Int): Int{
@@ -24,13 +27,12 @@ fun checkCommission(type: String = VK, previousSum: Int = 0, currentSum: Int): I
 }
 
 fun checkPreviousTransactions(previousSum: Int, currentSum: Int): Int{
-    return if (previousSum / 100 > 75000) (currentSum * 0.006 + 2000).roundToInt() else 0
+    return if (previousSum > LIMIT) (currentSum * (PERCENT_M_M / 100) + ADDITIONAL_PAY).roundToInt() else 0
 }
 
 fun checkMinCommission(sum: Int): Int {
-    val amount = (sum * 0.0075).roundToInt()
-    val minCommission = 3500
-    return if (amount > minCommission) amount else minCommission
+    val amount = (sum * (PERCENT_V_M / 100)).roundToInt()
+    return if (amount > MIN_COMMISSION) amount else MIN_COMMISSION
 
 }
     fun formattedMessage(sum: Int): String{
