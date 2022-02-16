@@ -13,7 +13,7 @@ class MainKtTest {
         val type = VK
         val previousSum = 0
         val currentSum = 1000
-        val expected = 0
+        val expected = 2
 
         val result = checkCommission(type = type, previousSum = previousSum, currentSum = currentSum)
 
